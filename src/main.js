@@ -12,6 +12,9 @@ import './styles/index.less'
 // 引入 amfe-flexible 设置rem 基准值
 import 'amfe-flexible'
 
+// 引入处理时间工具
+import './utils/fromateDate'
+
 Vue.config.productionTip = false
 
 new Vue({
