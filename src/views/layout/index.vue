@@ -21,7 +21,7 @@
           </template>
         </van-tabbar-item>
         <van-tabbar-item to="/my" icon="setting-o">
-          <span>我的</span>
+          <span>{{user ? '我的' : '未登录'}}</span>
           <template slot="icon">
             <i class="iconfont icon-wode"></i>
           </template>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'Layout',
   props: { },
@@ -54,7 +55,7 @@ export default {
 
   },
   computed: {
-
+    ...mapState(['user'])
   },
   watch: {
 
