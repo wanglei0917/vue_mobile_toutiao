@@ -8,6 +8,7 @@
           size="small"
           round
           slot="title"
+          to="/search"
         >搜索</van-button>
       </van-nav-bar>
 
