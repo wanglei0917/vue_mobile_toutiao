@@ -11,7 +11,8 @@ module.exports = {
         return file.indexOf('vant') !== -1 ? 37.5 : 75
       },
       // 设定从 px 转换 rem 的属性  * 默认所有属性
-      propList: ['*']
+      propList: ['*'],
+      exclude: 'markdown-css'
     }
   }
 }

@@ -66,7 +66,7 @@
 <script>
 import { getUserInfo } from '@/api/user'
 import { mapState } from 'vuex'
-
+import { setItem } from '@/utils/storage'
 export default {
   name: 'MyPage',
   props: { },
@@ -90,6 +90,7 @@ export default {
       try {
         const { data } = await getUserInfo()
         this.userInfo = data.data
+        setItem('USER_ID', this.userInfo.id)
       } catch (err) {
         this.$toast.fail('数据获取失败')
       }
@@ -106,6 +107,7 @@ export default {
         .then(() => {
           this.$store.commit('setUser', null)
           this.$toast('已退出')
+          this.setItem('USER_ID', '')
         })
         .catch(() => {
         })
