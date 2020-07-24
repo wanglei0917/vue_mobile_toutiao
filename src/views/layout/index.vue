@@ -1,5 +1,8 @@
 <template>
     <div class="layout-container">
+      <keep-alive>
+        <router-view />
+      </keep-alive>
       <!-- 底部标签栏 -->
       <van-tabbar v-model="active" router>
         <van-tabbar-item to="/" icon="home-o">
@@ -27,8 +30,6 @@
           </template>
         </van-tabbar-item>
       </van-tabbar>
-
-      <router-view></router-view>
     </div>
 </template>
 

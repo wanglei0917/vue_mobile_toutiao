@@ -54,3 +54,37 @@ export const deleteFollow = target => {
     url: `/app/v1_0/user/followings/${target}`
   })
 }
+
+// 获取用户信息
+export const getUserProfile = () => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user/profile'
+  })
+}
+
+// 修改用户信息
+export const updateUserProfile = data => {
+  return request({
+    method: 'PATCH',
+    url: '/app/v1_0/user/profile',
+    data
+  })
+}
+
+// 修改用户头像
+export const updateUserPhoto = data => {
+  return request({
+    method: 'PATCH',
+    url: '/app/v1_0/user/photo',
+    data
+  })
+}
+
+// 获取指定用户信息
+export const getUserInfoById = target => {
+  return request({
+    method: 'GET',
+    url: `/app/v1_0/users/${target}`
+  })
+}

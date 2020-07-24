@@ -28,5 +28,26 @@ request.interceptors.request.use(req => {
 })
 
 // 响应拦截器
-
+request.interceptors.response.use(res => {
+  return res
+}, async err => {
+  console.dir(err)
+  if (err.response && err.response.status === 401) {
+    const { user } = store.state
+    if (user && user.refresh_token) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: 'http://ttapi.research.itcast.cn/app/v1_0/authorizations',
+        headers: {
+          Authorization: 'Bearer ' + user.refresh_token
+        }
+      })
+      store.commit('setUser', {
+        token: data.data.token,
+        refresh_token: user.refresh_token
+      })
+      return request(err.config)
+    }
+  }
+})
 export default request

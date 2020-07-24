@@ -5,6 +5,7 @@
       class="page-nav-bar"
       left-arrow
       title="黑马头条"
+      style="z-index: 0"
       @click-left="$router.back()"
     ></van-nav-bar>
     <!-- /导航栏 -->
@@ -44,7 +45,14 @@
         <!-- 文章内容 -->
         <div class="article-content markdown-body" v-html="article.content" ref="article-content"></div>
         <van-divider>正文结束</van-divider>
-
+        <!-- 评论内容 -->
+        <comment-list
+          :source="articleId"
+          type="a"
+          @total-count="totalCount = $event"
+          :list="commentList"
+          />
+        <!-- /评论内容 -->
         <!-- 底部区域 -->
         <div class="article-bottom">
           <van-button
@@ -52,14 +60,15 @@
             type="default"
             round
             size="small"
+            @click="$store.commit('setPostShow', true)"
           >写评论</van-button>
           <van-icon
             color="#777"
-            info="123"
+            :info="totalCount"
             name="comment-o"
           />
-          <collect-article v-model="article.is_collected" :article-id="article.aut_id"></collect-article>
-          <like-article v-model="article.attitude" :article-id="article.aut_id"></like-article>
+          <collect-article v-model="article.is_collected" :article-id="article.art_id"></collect-article>
+          <like-article v-model="article.attitude" :article-id="article.art_id"></like-article>
           <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
@@ -80,22 +89,56 @@
         <van-button class="retry-btn" @click="loadArticle">点击重试</van-button>
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
+
+      <!-- 文章评论弹出层 -->
+      <van-popup
+        :value="isPostShow"
+        position="bottom"
+        @click-overlay="$store.commit('setPostShow', false)"
+        >
+        <comment-post :target="articleId" @post-success="onPostSuccess"></comment-post>
+        </van-popup>
+      <!-- /文章评论弹出层 -->
+
+      <!-- 评论回复弹出层 -->
+      <van-popup
+        v-if="isReplyShow"
+        :value="isReplyShow"
+        position="bottom"
+        style="height: 100%"
+        >
+        <comment-reply></comment-reply>
+      </van-popup>
+      <!-- /评论回复弹出层 -->
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { getArticleById } from '@/api/article'
 import { ImagePreview } from 'vant'
 import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
+import CommentList from './components/comment-list'
+import CommentPost from './components/comment-post'
+import CommentReply from './components/comment-reply'
+
 export default {
   name: 'ArticleIndex',
   components: {
     FollowUser,
     CollectArticle,
-    LikeArticle
+    LikeArticle,
+    CommentList,
+    CommentPost,
+    CommentReply
+  },
+  provide: function () {
+    return {
+      articleId: this.articleId
+    }
   },
   props: {
     articleId: {
@@ -107,10 +150,14 @@ export default {
     return {
       isLoading: true,
       errStatus: 0,
-      article: {}
+      article: {},
+      totalCount: 0,
+      commentList: []
     }
   },
-  computed: {},
+  computed: {
+    ...mapState(['isPostShow', 'isReplyShow'])
+  },
   watch: {},
   created () {
     this.loadArticle()
@@ -150,6 +197,10 @@ export default {
           })
         }
       })
+    },
+    // 发布评论成功
+    onPostSuccess (data) {
+      this.commentList.unshift(data.new_obj)
     }
   }
 }

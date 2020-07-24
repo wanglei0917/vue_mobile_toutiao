@@ -1,5 +1,5 @@
 <template>
-    <div class="article-container">
+    <div class="article-container" ref="list">
       <van-pull-refresh
         v-model="isLoading"
         @refresh="onRefresh"
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import { getArticleList } from '@/api/article'
 import ArticleItem from '@/components/article-item'
 export default {
@@ -40,14 +41,21 @@ export default {
       time: null,
       error: false,
       isLoading: false,
-      pullSuccessText: ''
+      pullSuccessText: '',
+      scrollTop: 0
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.$refs.list.onscroll = debounce(() => {
+      this.scrollTop = this.$refs.list.scrollTop
+      console.log(this.scrollTop)
+    }, 500)
+  },
+  activated () {
+    this.$refs.list.scrollTop = this.scrollTop
   },
   methods: {
     // 展示文章,上拉加载
